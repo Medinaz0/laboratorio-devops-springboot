@@ -8,10 +8,10 @@ variables:
   javaVersion: '21'
   artifactName: springboot-jar
   jarPattern: '$(Pipeline.Workspace)/$(artifactName)/*.jar'
-  azureServiceConnection: 'CHANGE_ME_AZURE_SERVICE_CONNECTION'
-  devAppServiceName: 'CHANGE_ME_DEV_APP_SERVICE'
-  qaAppServiceName: 'CHANGE_ME_QA_APP_SERVICE'
-  pdnAppServiceName: 'CHANGE_ME_PDN_APP_SERVICE'
+  azureServiceConnection: 'sc-azure-lab-devops'
+  devAppServiceName: 'app-lab-devops-dev'
+  qaAppServiceName: 'app-lab-devops-qa'
+  pdnAppServiceName: 'app-lab-devops-pdn'
 
 stages:
   - stage: CI
