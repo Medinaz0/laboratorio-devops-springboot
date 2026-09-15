@@ -15,4 +15,14 @@ class HelloControllerTest {
         assertThat(response.message()).isEqualTo("Hola desde DevOps");
         assertThat(response.environment()).isEqualTo("TEST");
     }
+
+    @Test
+    void statusReturnsMessageAndEnvironment() {
+        HelloController controller = new HelloController("TEST");
+
+        HelloResponse response = controller.status();
+
+        assertThat(response.message()).isEqualTo("Aplicacion funcionando correctamente");
+        assertThat(response.environment()).isEqualTo("TEST");
+    }
 }

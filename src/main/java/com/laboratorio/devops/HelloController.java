@@ -17,4 +17,9 @@ public class HelloController {
     public HelloResponse hello() {
         return new HelloResponse("Hola desde DevOps", environment);
     }
+
+    @GetMapping("/api/status")
+    public HelloResponse status() {
+        return new HelloResponse("Aplicacion funcionando correctamente", environment);
+    }
 }
