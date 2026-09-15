@@ -1,0 +1,20 @@
+package com.laboratorio.devops;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HelloController {
+
+    private final String environment;
+
+    public HelloController(@Value("${APP_ENVIRONMENT:LOCAL}") String environment) {
+        this.environment = environment;
+    }
+
+    @GetMapping("/api/hello")
+    public HelloResponse hello() {
+        return new HelloResponse("Hola desde DevOps", environment);
+    }
+}

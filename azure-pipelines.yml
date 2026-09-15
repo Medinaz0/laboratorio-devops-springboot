@@ -1,0 +1,129 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  vmImageName: ubuntu-latest
+  javaVersion: '21'
+  artifactName: springboot-jar
+  jarPattern: '$(Pipeline.Workspace)/$(artifactName)/*.jar'
+  azureServiceConnection: 'CHANGE_ME_AZURE_SERVICE_CONNECTION'
+  devAppServiceName: 'CHANGE_ME_DEV_APP_SERVICE'
+  qaAppServiceName: 'CHANGE_ME_QA_APP_SERVICE'
+  pdnAppServiceName: 'CHANGE_ME_PDN_APP_SERVICE'
+
+stages:
+  - stage: CI
+    displayName: Build, Test and Publish Artifact
+    jobs:
+      - job: Build
+        displayName: Build Spring Boot JAR
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - checkout: self
+
+          - task: JavaToolInstaller@0
+            displayName: Use Java $(javaVersion)
+            inputs:
+              versionSpec: $(javaVersion)
+              jdkArchitectureOption: x64
+              jdkSourceOption: PreInstalled
+
+          - task: Maven@4
+            displayName: Run tests and package
+            inputs:
+              mavenPomFile: pom.xml
+              goals: clean package
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+              javaHomeOption: JDKVersion
+              jdkVersionOption: '1.21'
+              mavenVersionOption: Default
+
+          - task: CopyFiles@2
+            displayName: Collect JAR artifact
+            inputs:
+              sourceFolder: '$(System.DefaultWorkingDirectory)/target'
+              contents: '*.jar'
+              targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+          - publish: '$(Build.ArtifactStagingDirectory)'
+            displayName: Publish JAR artifact
+            artifact: $(artifactName)
+
+  - stage: Deploy_DEV
+    displayName: Deploy DEV
+    dependsOn: CI
+    condition: succeeded()
+    jobs:
+      - deployment: DeployDEV
+        displayName: Deploy to DEV App Service
+        environment: DEV
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: $(artifactName)
+
+                - task: AzureWebApp@1
+                  displayName: Deploy same JAR to DEV
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    appType: webAppLinux
+                    appName: $(devAppServiceName)
+                    package: $(jarPattern)
+
+  - stage: Deploy_QA
+    displayName: Deploy QA
+    dependsOn: Deploy_DEV
+    condition: succeeded()
+    jobs:
+      - deployment: DeployQA
+        displayName: Deploy to QA App Service
+        environment: QA
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: $(artifactName)
+
+                - task: AzureWebApp@1
+                  displayName: Deploy same JAR to QA
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    appType: webAppLinux
+                    appName: $(qaAppServiceName)
+                    package: $(jarPattern)
+
+  - stage: Deploy_PDN
+    displayName: Deploy PDN
+    dependsOn: Deploy_QA
+    condition: succeeded()
+    jobs:
+      - deployment: DeployPDN
+        displayName: Deploy to PDN App Service
+        environment: PDN
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: $(artifactName)
+
+                - task: AzureWebApp@1
+                  displayName: Deploy same JAR to PDN
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    appType: webAppLinux
+                    appName: $(pdnAppServiceName)
+                    package: $(jarPattern)
