@@ -98,6 +98,16 @@ flowchart TB
 
 Abrir cada URL agregando `/api/hello` al final.
 
+## URLs rapidas
+
+Estas son las URLs principales del laboratorio para probar los ambientes sin buscarlas en Azure:
+
+| Ambiente | URL                                                                      |
+| -------- | ------------------------------------------------------------------------ |
+| DEV      | https://app-lab-devops-dev-b9ahbhfudsf8fddr.eastus2-01.azurewebsites.net |
+| QA       | https://app-lab-devops-qa-ftbpabfweqacc5b9.eastus2-01.azurewebsites.net  |
+| PDN      | https://app-lab-devops-pdn-d7fqa8gdf2ethfem.eastus2-01.azurewebsites.net |
+
 DEV debe responder:
 
 ```json
