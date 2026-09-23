@@ -22,4 +22,10 @@ public class HelloController {
     public HelloResponse status() {
         return new HelloResponse("Aplicacion funcionando correctamente", environment);
     }
+
+
+    @GetMapping("/api/status2")
+    public HelloResponse status2() {
+        return new HelloResponse("Aplicacion funcionando", environment);
+    }
 }
