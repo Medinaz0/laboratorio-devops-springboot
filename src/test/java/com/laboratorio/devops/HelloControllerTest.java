@@ -30,7 +30,7 @@ class HelloControllerTest {
     void status2ReturnsMessageAndEnvironment() {
         HelloController controller = new HelloController("TEST");
 
-        HelloResponse response = controller.statustwo();
+        HelloResponse response = controller.statusthree();
 
         assertThat(response.message()).isEqualTo("Aplicacion funcionando");
         assertThat(response.environment()).isEqualTo("TEST");

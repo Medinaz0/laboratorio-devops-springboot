@@ -24,8 +24,8 @@ public class HelloController {
     }
 
 
-    @GetMapping("/api/statustwo")
-    public HelloResponse statustwo() {
+    @GetMapping("/api/statusthree")
+    public HelloResponse statusthree() {
         return new HelloResponse("Aplicacion funcionando", environment);
     }
 }
